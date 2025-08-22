@@ -1,0 +1,5 @@
+# no quiero que se me likee las variables de entorno
+*.env
+
+#no es necesario subir el .exe
+*.exe

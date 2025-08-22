@@ -19,7 +19,7 @@ func main() {
 	db, err := sql.Open("sqlite3", "./database.db")
 
 	if err != nil {
-		log.Fatalf("Error opening database: %v/n", err)
+		log.Fatalf("Error opening database: %v", err)
 	}
 
 	defer db.Close()
@@ -33,23 +33,23 @@ func main() {
 	fSrc, err := (&file.File{}).Open("cmd/migrate/migrations")
 
 	if err != nil {
-		log.Fatalf("Error opening migration files: %v/n", err)
+		log.Fatalf("Error opening migration files: %v", err)
 	}
 
 	m, err := migrate.NewWithInstance("file", fSrc, "sqlite3", instance)
 
 	if err != nil {
-		log.Fatalf("Error creating migration instance: %v/n", err)
+		log.Fatalf("Error creating migration instance: %v", err)
 	}
 
 	switch direction {
 	case "up":
 		if err := m.Up(); err != nil && err != migrate.ErrNoChange {
-			log.Fatalf("Error running migration: %v/n", err)
+			log.Fatalf("Error running migration: %v", err)
 		}
 	case "down":
 		if err := m.Down(); err != nil && err != migrate.ErrNoChange {
-			log.Fatalf("Error running migration: %v/n", err)
+			log.Fatalf("Error running migration: %v", err)
 		}
 	default:
 		log.Fatal("Invalid migration direction. Please use 'up' or 'down'.")
