@@ -115,11 +115,81 @@ func (app *application) deleteEvent(c *gin.Context) {
 
 //events relacionados con el attendees (Asistentes)
 
-// func (app *application) addAttendeeToEvent(c *gin.Context) {
-// 	eventId, err := strconv.Atoi(c.Param("id"))
+func (app *application) addAttendeeToEvent(c *gin.Context) {
+	eventId, err := strconv.Atoi(c.Param("id"))
 
-// 	if err != nil {
-// 		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid event ID"})
-// 	}
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid event ID"})
+		return
+	}
 
-// }
+	userId, err := strconv.Atoi(c.Param("userId"))
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid user ID"})
+		return
+	}
+
+	event, err := app.models.Events.GetByID(eventId)
+
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to retrieve event"})
+		return
+	}
+
+	if event == nil {
+		c.JSON(http.StatusNotFound, gin.H{"error": "event not found"})
+		return
+	}
+
+	userToAdd, err := app.models.Users.GetByID(userId)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to retrieve user"})
+		return
+	}
+
+	if userToAdd == nil {
+		c.JSON(http.StatusNotFound, gin.H{"error": "user not found"})
+		return
+	}
+
+	existingAttendee, err := app.models.Attendees.GetByEventAndAttendee(event.Id, userToAdd.Id)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to check existing attendee"})
+		return
+	}
+
+	if existingAttendee != nil {
+		c.JSON(http.StatusConflict, gin.H{"error": "user is already an attendee"})
+		return
+	}
+
+	attendee := database.Attendee{
+		EventId: event.Id,
+		UserId:  userToAdd.Id,
+	}
+
+	_, err = app.models.Attendees.Insert(&attendee)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to add attendee"})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"message": "attendee added successfully"})
+}
+
+func (app *application) getEventAttendeeForEvent(c *gin.Context) {
+	eventId, err := strconv.Atoi(c.Param("id"))
+
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid event ID"})
+		return
+	}
+
+	attendees, err := app.models.Attendees.GetAttendeesByEvent(eventId)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to retrieve attendees"})
+		return
+	}
+
+	c.JSON(http.StatusOK, attendees)
+}
