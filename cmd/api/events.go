@@ -112,3 +112,14 @@ func (app *application) deleteEvent(c *gin.Context) {
 
 	c.JSON(http.StatusNoContent, nil)
 }
+
+//events relacionados con el attendees (Asistentes)
+
+// func (app *application) addAttendeeToEvent(c *gin.Context) {
+// 	eventId, err := strconv.Atoi(c.Param("id"))
+
+// 	if err != nil {
+// 		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid event ID"})
+// 	}
+
+// }

@@ -11,11 +11,14 @@ func (app *application) routes() http.Handler {
 
 	v1 := g.Group("/v1")
 	{
-		v1.GET("/users", app.getAllEvents)
-		v1.GET("/users/:id", app.getByIdEvent)
-		v1.POST("/users", app.createEvent)
-		v1.PUT("/users/:id", app.updateEvent)
-		v1.DELETE("/users/:id", app.deleteEvent)
+		// Events
+		v1.GET("/events", app.getAllEvents)
+		v1.GET("/events/:id", app.getByIdEvent)
+		v1.POST("/events", app.createEvent)
+		v1.PUT("/events/:id", app.updateEvent)
+		v1.DELETE("/events/:id", app.deleteEvent)
+		// v1.POST("/events/:id/attendees/:userId", app.addAttendeeToEvent)
+		// v1.GET("/events/:id/attendees", app.getEventAttendeeForEvent)
 
 		v1.POST("/auth/register", app.registerUser)
 		// v1.POST("/auth/login", app.loginUser)
