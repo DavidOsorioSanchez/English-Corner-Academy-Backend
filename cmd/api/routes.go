@@ -9,21 +9,26 @@ import (
 func (app *application) routes() http.Handler {
 	g := gin.Default()
 
-	v1 := g.Group("/v1")
+	mainGroup := g.Group("/v1")
 	{
 		// Events
-		v1.GET("/events", app.getAllEvents)
-		v1.GET("/events/:id", app.getByIdEvent)
-		v1.POST("/events", app.createEvent)
-		v1.PUT("/events/:id", app.updateEvent)
-		v1.DELETE("/events/:id", app.deleteEvent)
-		v1.POST("/events/:id/attendees/:userId", app.addAttendeeToEvent)
-		v1.GET("/events/:id/attendees", app.getEventAttendeeForEvent)
-		// v1.DELETE("/events/:id/attendees/:userId", app.deleteAttendeeFromEvent)
-		// v1.GET("/attendees/:id/events", app.getEventsByAttendee)
+		mainGroup.GET("/events", app.getAllEvents)
+		mainGroup.GET("/events/:id", app.getByIdEvent)
+		mainGroup.GET("/events/:id/attendees", app.getEventAttendeeForEvent)
+		mainGroup.GET("/attendees/:id/events", app.getEventsByAttendee)
 
-		v1.POST("/auth/register", app.registerUser)
-		// v1.POST("/auth/login", app.loginUser)
+		mainGroup.POST("/auth/register", app.registerUser)
+		mainGroup.POST("/auth/login", app.loginUser)
+	}
+
+	authGroup := mainGroup.Group("/")
+	authGroup.Use(app.authMiddleware())
+	{
+		authGroup.POST("/events", app.createEvent)
+		authGroup.PUT("/events/:id", app.updateEvent)
+		authGroup.DELETE("/events/:id", app.deleteEvent)
+		authGroup.POST("/events/:id/attendees/:userId", app.addAttendeeToEvent)
+		authGroup.DELETE("/events/:id/attendees/:userId", app.deleteAttendeeFromEvent)
 	}
 
 	return g
