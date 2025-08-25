@@ -16,6 +16,9 @@ func (app *application) createEvent(c *gin.Context) {
 		return
 	}
 
+	user := app.GetUserFromContext(c)
+	event.OwnerId = user.Id
+
 	err := app.models.Events.Insert(&event)
 
 	if err != nil {
