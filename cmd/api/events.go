@@ -52,6 +52,16 @@ func (app *application) getByIdEvent(c *gin.Context) {
 	c.JSON(http.StatusOK, event)
 }
 
+// getEvents return all events
+//
+// @Summary Retorna todos los eventos
+// @Description Obtiene una lista de todos los eventos de la database
+// @Tags Events
+// @Accept json
+// @Produce json
+// @Success 200 {array} database.Event
+// @Failure 500 {object} gin.H
+// @Router /api/v1/events [get]
 func (app *application) getAllEvents(c *gin.Context) {
 	events, err := app.models.Events.GetAll()
 
