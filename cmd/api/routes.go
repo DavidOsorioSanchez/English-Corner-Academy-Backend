@@ -22,6 +22,7 @@ func (app *application) routes() http.Handler {
 
 		mainGroup.POST("/auth/register", app.registerUser)
 		mainGroup.POST("/auth/login", app.loginUser)
+		// mainGroup.POST("/auth/register/google", app.registerGoogle)
 	}
 
 	authGroup := mainGroup.Group("/")

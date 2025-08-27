@@ -21,6 +21,15 @@ type loginRequest struct {
 	Password string `json:"password" binding:"required,min=8"`
 }
 
+// var (
+// 	key = env.GetEnvString("CLIENT_GOOGLE_ID", "your_google_client_secret")
+// )
+
+// const (
+// 	Max    = 86400 * 30
+// 	IsProd = false
+// )
+
 type loginResponse struct {
 	Token string `json:"token"`
 }
