@@ -4,6 +4,6 @@
 #no es necesario subir el .exe
 *.exe
 
-build-error.log
+build-errors.log
 
 /tmp

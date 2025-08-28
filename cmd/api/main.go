@@ -1,13 +1,14 @@
 package main
 
 import (
-	"English-Corner-Academy-Gim/internal/database"
-	"English-Corner-Academy-Gim/internal/env"
 	"database/sql"
 	"log"
 
-	_ "English-Corner-Academy-Gim/docs"
+	"github.com/DavidOsorioSanchez/englishcorneracademy-gim/internal/database"
 
+	_ "github.com/DavidOsorioSanchez/englishcorneracademy-gim/docs"
+
+	"github.com/DavidOsorioSanchez/englishcorneracademy-gim/internal/env"
 	_ "github.com/joho/godotenv/autoload"
 	_ "github.com/mattn/go-sqlite3"
 )

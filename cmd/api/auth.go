@@ -1,10 +1,10 @@
 package main
 
 import (
-	"English-Corner-Academy-Gim/internal/database"
 	"net/http"
 	"time"
 
+	"github.com/DavidOsorioSanchez/englishcorneracademy-gim/internal/database"
 	"github.com/gin-gonic/gin"
 	"github.com/golang-jwt/jwt"
 	"golang.org/x/crypto/bcrypt"
@@ -20,15 +20,6 @@ type loginRequest struct {
 	Email    string `json:"email" binding:"required,email"`
 	Password string `json:"password" binding:"required,min=8"`
 }
-
-// var (
-// 	key = env.GetEnvString("CLIENT_GOOGLE_ID", "your_google_client_secret")
-// )
-
-// const (
-// 	Max    = 86400 * 30
-// 	IsProd = false
-// )
 
 type loginResponse struct {
 	Token string `json:"token"`

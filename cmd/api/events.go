@@ -1,9 +1,10 @@
 package main
 
 import (
-	"English-Corner-Academy-Gim/internal/database"
 	"net/http"
 	"strconv"
+
+	"github.com/DavidOsorioSanchez/englishcorneracademy-gim/internal/database"
 
 	"github.com/gin-gonic/gin"
 )

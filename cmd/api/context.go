@@ -1,7 +1,7 @@
 package main
 
 import (
-	"English-Corner-Academy-Gim/internal/database"
+	"github.com/DavidOsorioSanchez/englishcorneracademy-gim/internal/database"
 
 	"github.com/gin-gonic/gin"
 )
@@ -10,7 +10,7 @@ import (
 // comprueba que sea igual en la base de datos que en el servicio que se use
 
 // probablemente tenga que cambiar la database ya que no me parece tan escalable el sqlite3
-// asi que probablemente tenga que reacer el archivo entero ಥ‿ಥ
+// asi que probablemente tenga que reacer los archivo entero ಥ‿ಥ
 
 func (app *application) GetUserFromContext(c *gin.Context) *database.User {
 	contextUser, exist := c.Get("user")
