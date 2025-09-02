@@ -3,6 +3,7 @@ package main
 import (
 	"net/http"
 
+	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 
 	swaggerFiles "github.com/swaggo/files"
@@ -26,7 +27,12 @@ func (app *application) routes() http.Handler {
 	}
 
 	authGroup := mainGroup.Group("/")
-	authGroup.Use(app.authMiddleware())
+	authGroup.Use(app.authMiddleware(), cors.New(cors.Config{
+		AllowOrigins: []string{"http://localhost:5173"},
+		AllowMethods: []string{"GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"},
+		// AllowHeaders:     []string{"Accept", "Authorization", "Content-Type"},
+		AllowCredentials: true, //cookies permitidas
+	}))
 	{
 		authGroup.POST("/events", app.createEvent)
 		authGroup.PUT("/events/:id", app.updateEvent)

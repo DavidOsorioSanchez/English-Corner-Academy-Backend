@@ -4,13 +4,13 @@ import (
 	"net/http"
 	"strconv"
 
-	"github.com/DavidOsorioSanchez/englishcorneracademy-gim/internal/database"
+	"github.com/DavidOsorioSanchez/englishcorneracademy-gim/internal/services"
 
 	"github.com/gin-gonic/gin"
 )
 
 func (app *application) createEvent(c *gin.Context) {
-	var event database.Event
+	var event services.Event
 
 	if err := c.ShouldBindJSON(&event); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error: ": err.Error()})
@@ -101,7 +101,7 @@ func (app *application) updateEvent(c *gin.Context) {
 		return
 	}
 
-	updatedEvent := &database.Event{}
+	updatedEvent := &services.Event{}
 
 	if err := c.ShouldBindJSON(updatedEvent); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
@@ -210,7 +210,7 @@ func (app *application) addAttendeeToEvent(c *gin.Context) {
 		return
 	}
 
-	attendee := database.Attendee{
+	attendee := services.Attendee{
 		EventId: event.Id,
 		UserId:  userToAdd.Id,
 	}

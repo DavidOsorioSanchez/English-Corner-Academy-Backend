@@ -1,4 +1,4 @@
-package database
+package services
 
 import (
 	"context"
@@ -19,11 +19,18 @@ type User struct {
 
 func (m *UserModel) Insert(user *User) error {
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
-
 	defer cancel()
 
-	query := "INSERT INTO users (name, email, password) VALUES ($1, $2, $3) RETURNING id"
-	return m.DB.QueryRowContext(ctx, query, user.Name, user.Email, user.Password).Scan(&user.Id)
+	query := `
+        INSERT INTO users (name, email, password) VALUES (?, ?, ?)
+    `
+
+	_, err := m.DB.ExecContext(ctx, query, user.Name, user.Email, user.Password)
+
+	if err != nil {
+		return err
+	}
+	return nil
 }
 
 func (m *UserModel) GetByID(id int) (*User, error) {

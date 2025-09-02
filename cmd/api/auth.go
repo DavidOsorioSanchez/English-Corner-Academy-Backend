@@ -4,7 +4,7 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/DavidOsorioSanchez/englishcorneracademy-gim/internal/database"
+	"github.com/DavidOsorioSanchez/englishcorneracademy-gim/internal/services"
 	"github.com/gin-gonic/gin"
 	"github.com/golang-jwt/jwt"
 	"golang.org/x/crypto/bcrypt"
@@ -81,7 +81,7 @@ func (app *application) registerUser(c *gin.Context) {
 	}
 
 	register.Password = string(hashedPassword)
-	user := database.User{
+	user := services.User{
 		Email:    register.Email,
 		Password: register.Password,
 		Name:     register.Name,

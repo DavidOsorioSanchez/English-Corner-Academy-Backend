@@ -2,15 +2,17 @@ package main
 
 import (
 	"database/sql"
+	"fmt"
 	"log"
+	"os"
 
-	"github.com/DavidOsorioSanchez/englishcorneracademy-gim/internal/database"
+	"github.com/DavidOsorioSanchez/englishcorneracademy-gim/internal/services"
 
 	_ "github.com/DavidOsorioSanchez/englishcorneracademy-gim/docs"
 
 	"github.com/DavidOsorioSanchez/englishcorneracademy-gim/internal/env"
+	_ "github.com/go-sql-driver/mysql"
 	_ "github.com/joho/godotenv/autoload"
-	_ "github.com/mattn/go-sqlite3"
 )
 
 // esto es de lo mas loco que e visto jajajajaj,
@@ -27,18 +29,28 @@ import (
 type application struct {
 	port      int
 	jwtSecret string
-	models    database.Models
+	models    services.Models
 }
 
+var (
+	dbname   = os.Getenv("DB_DATABASENAME")
+	password = os.Getenv("DB_PASSWORD")
+	username = os.Getenv("DB_USERNAME")
+	port     = os.Getenv("DB_PORT")
+	host     = os.Getenv("DB_HOST")
+)
+
 func main() {
-	db, err := sql.Open("sqlite3", "./database.db")
+	db, err := sql.Open("mysql", fmt.Sprintf("%s:%s@tcp(%s:%s)/%s", username, password, host, port, dbname))
 	if err != nil {
-		log.Fatalf("Error opening database: %v", err)
+		// This will not be a connection error, but a DSN parse error or
+		// another initialization error.
+		log.Fatal(err)
 	}
 
 	defer db.Close()
 
-	models := database.NewModels(db)
+	models := services.NewModels(db)
 	app := &application{
 		port:      env.GetEnvInt("PORT", 8080),
 		jwtSecret: env.GetEnvString("JWT_SECRET", "mysecret"),
