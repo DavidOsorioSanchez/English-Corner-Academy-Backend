@@ -1,8 +1,7 @@
 package main
 
 import (
-	"github.com/DavidOsorioSanchez/englishcorneracademy-gim/internal/database"
-
+	database "github.com/DavidOsorioSanchez/englishcorneracademy-gim/internal/services"
 	"github.com/gin-gonic/gin"
 )
 
