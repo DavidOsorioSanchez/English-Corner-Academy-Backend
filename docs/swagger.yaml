@@ -35,10 +35,10 @@ paths:
   /api/v1/events:
     get:
       consumes:
-      - application/json
+      - Application/json
       description: Obtiene una lista de todos los eventos de la database
       produces:
-      - application/json
+      - Application/json
       responses:
         "200":
           description: OK

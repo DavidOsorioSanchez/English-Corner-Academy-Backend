@@ -11,7 +11,7 @@ import (
 // probablemente tenga que cambiar la database ya que no me parece tan escalable el sqlite3
 // asi que probablemente tenga que reacer los archivo entero ಥ‿ಥ
 
-func (app *application) GetUserFromContext(c *gin.Context) *database.User {
+func (app *Application) GetUserFromContext(c *gin.Context) *database.User {
 	contextUser, exist := c.Get("user")
 
 	if !exist {

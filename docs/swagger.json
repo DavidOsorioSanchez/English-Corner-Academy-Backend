@@ -11,10 +11,10 @@
             "get": {
                 "description": "Obtiene una lista de todos los eventos de la database",
                 "consumes": [
-                    "application/json"
+                    "Application/json"
                 ],
                 "produces": [
-                    "application/json"
+                    "Application/json"
                 ],
                 "tags": [
                     "Events"

@@ -9,7 +9,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func (app *application) createEvent(c *gin.Context) {
+func (app *Application) createEvent(c *gin.Context) {
 	var event services.Event
 
 	if err := c.ShouldBindJSON(&event); err != nil {
@@ -30,7 +30,7 @@ func (app *application) createEvent(c *gin.Context) {
 	c.JSON(http.StatusCreated, gin.H{"event": event})
 }
 
-func (app *application) getByIdEvent(c *gin.Context) {
+func (app *Application) getByIdEvent(c *gin.Context) {
 	id, err := strconv.Atoi(c.Param("id"))
 
 	if err != nil {
@@ -63,7 +63,7 @@ func (app *application) getByIdEvent(c *gin.Context) {
 // @Success 200 {array} database.Event
 // @Failure 500 {object} gin.H
 // @Router /api/v1/events [get]
-func (app *application) getAllEvents(c *gin.Context) {
+func (app *Application) getAllEvents(c *gin.Context) {
 	events, err := app.models.Events.GetAll()
 
 	if err != nil {
@@ -74,7 +74,7 @@ func (app *application) getAllEvents(c *gin.Context) {
 	c.JSON(http.StatusOK, events)
 }
 
-func (app *application) updateEvent(c *gin.Context) {
+func (app *Application) updateEvent(c *gin.Context) {
 	id, err := strconv.Atoi(c.Param("id"))
 
 	if err != nil {
@@ -118,7 +118,7 @@ func (app *application) updateEvent(c *gin.Context) {
 	c.JSON(http.StatusOK, updatedEvent)
 }
 
-func (app *application) deleteEvent(c *gin.Context) {
+func (app *Application) deleteEvent(c *gin.Context) {
 	id, err := strconv.Atoi(c.Param("id"))
 
 	if err != nil {
@@ -155,7 +155,7 @@ func (app *application) deleteEvent(c *gin.Context) {
 
 //events relacionados con el attendees (Asistentes)
 
-func (app *application) addAttendeeToEvent(c *gin.Context) {
+func (app *Application) addAttendeeToEvent(c *gin.Context) {
 	eventId, err := strconv.Atoi(c.Param("id"))
 
 	if err != nil {
@@ -224,7 +224,7 @@ func (app *application) addAttendeeToEvent(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"message": "attendee added successfully"})
 }
 
-func (app *application) getEventAttendeeForEvent(c *gin.Context) {
+func (app *Application) getEventAttendeeForEvent(c *gin.Context) {
 	eventId, err := strconv.Atoi(c.Param("id"))
 
 	if err != nil {
@@ -241,7 +241,7 @@ func (app *application) getEventAttendeeForEvent(c *gin.Context) {
 	c.JSON(http.StatusOK, attendees)
 }
 
-func (app *application) deleteAttendeeFromEvent(c *gin.Context) {
+func (app *Application) deleteAttendeeFromEvent(c *gin.Context) {
 	Id, err := strconv.Atoi(c.Param("id"))
 
 	if err != nil {
@@ -284,7 +284,7 @@ func (app *application) deleteAttendeeFromEvent(c *gin.Context) {
 	c.JSON(http.StatusNoContent, nil)
 }
 
-func (app *application) getEventsByAttendee(c *gin.Context) {
+func (app *Application) getEventsByAttendee(c *gin.Context) {
 	Id, err := strconv.Atoi(c.Param("id"))
 
 	if err != nil {

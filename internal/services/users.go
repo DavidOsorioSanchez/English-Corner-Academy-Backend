@@ -3,6 +3,7 @@ package services
 import (
 	"context"
 	"database/sql"
+	"log"
 	"time"
 )
 
@@ -22,14 +23,24 @@ func (m *UserModel) Insert(user *User) error {
 	defer cancel()
 
 	query := `
-        INSERT INTO users (name, email, password) VALUES (?, ?, ?)
+        INSERT INTO users (name, email, password) 
+		VALUES (?, ?, ?)
     `
 
-	_, err := m.DB.ExecContext(ctx, query, user.Name, user.Email, user.Password)
-
+	result, err := m.DB.ExecContext(ctx, query, user.Name, user.Email, user.Password)
 	if err != nil {
+		log.Fatal("error al insertar el usuario: ", err)
 		return err
 	}
+
+	id, err := result.LastInsertId()
+	if err != nil {
+		log.Fatal("error al obtener el ID del usuario: ", err)
+		return err
+	}
+
+	user.Id = int(id)
+
 	return nil
 }
 
@@ -37,7 +48,7 @@ func (m *UserModel) GetByID(id int) (*User, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 	defer cancel()
 
-	query := "SELECT * FROM user WHERE id = $1"
+	query := "SELECT * FROM user WHERE id = ?"
 
 	var user User
 
@@ -57,7 +68,7 @@ func (m *UserModel) GetById(id int) (*User, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 	defer cancel()
 
-	query := "SELECT * FROM users WHERE id = $1"
+	query := "SELECT * FROM users WHERE id = ?"
 
 	var user User
 
@@ -77,7 +88,7 @@ func (m *UserModel) GetByUser(query string, args ...interface{}) (*User, error) 
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 	defer cancel()
 
-	// query := "SELECT * FROM user WHERE id = $1"
+	// query := "SELECT * FROM users WHERE id = ?"
 
 	var user User
 
@@ -94,7 +105,7 @@ func (m *UserModel) GetByUser(query string, args ...interface{}) (*User, error) 
 }
 
 func (m *UserModel) Get(id int) (*User, error) {
-	query := "SELECT * FROM users WHERE id = $1"
+	query := "SELECT * FROM users WHERE id = ?"
 
 	return m.GetByUser(query, id)
 }
@@ -103,7 +114,27 @@ func (m *UserModel) Get(id int) (*User, error) {
 //si empieza la func con minuscula se vuelve privado
 
 func (m *UserModel) GetByEmail(email string) (*User, error) {
-	query := "SELECT * FROM users WHERE email = $1"
+	query := "SELECT * FROM users WHERE email = ?"
 
 	return m.GetByUser(query, email)
 }
+
+// func (m *UserModel) GetLastUser(id int) (*User, error) {
+// 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
+// 	defer cancel()
+
+// 	query := "SELECT * FROM users ORDER BY id DESC LIMIT 1"
+
+// 	var user User
+
+// 	err := m.DB.QueryRowContext(ctx, query).Scan(&user.Id, &user.Name, &user.Email, &user.Password)
+// 	if err != nil {
+// 		if err == sql.ErrNoRows {
+// 			return nil, nil
+// 		}
+
+// 		return nil, err
+// 	}
+
+// 	return &user, nil
+// }

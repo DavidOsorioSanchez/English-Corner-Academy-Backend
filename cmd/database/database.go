@@ -13,6 +13,15 @@ import (
 	// "github.com/golang-migrate/migrate/database/mysql"
 )
 
+var (
+	dbname     = os.Getenv("DB_DATABASENAME")
+	password   = os.Getenv("DB_PASSWORD")
+	username   = os.Getenv("DB_USERNAME")
+	port       = os.Getenv("DB_PORT")
+	host       = os.Getenv("DB_HOST")
+	dbInstance *service
+)
+
 type Service interface {
 	// Health returns a map of health status information.
 	// The keys and values in the map are service-specific.
@@ -26,15 +35,6 @@ type Service interface {
 type service struct {
 	db *sql.DB
 }
-
-var (
-	dbname     = os.Getenv("DB_DATABASENAME")
-	password   = os.Getenv("DB_PASSWORD")
-	username   = os.Getenv("DB_USERNAME")
-	port       = os.Getenv("DB_PORT")
-	host       = os.Getenv("DB_HOST")
-	dbInstance *service
-)
 
 func New() Service {
 	// Reuse Connection
@@ -50,12 +50,6 @@ func New() Service {
 		log.Fatal(err)
 	}
 
-	err = dbInstance.RunMigrations()
-
-	if err != nil {
-		log.Fatalf("Error running migrations: %v", err)
-	}
-
 	db.SetConnMaxLifetime(0)
 	db.SetMaxIdleConns(50)
 	db.SetMaxOpenConns(50)
@@ -63,6 +57,13 @@ func New() Service {
 	dbInstance = &service{
 		db: db,
 	}
+
+	err = dbInstance.RunMigrations()
+
+	if err != nil {
+		log.Fatalf("Error running migrations: %v", err)
+	}
+
 	return dbInstance
 }
 
@@ -123,4 +124,105 @@ func (s *service) Health() map[string]string {
 func (s *service) Close() error {
 	log.Printf("Disconnected from database: %s", dbname)
 	return s.db.Close()
+}
+
+// este codigo esta temporal hasta que lo refactorize bien
+// ya que asi si me funciona
+
+func (s *service) RunMigrations() error {
+	log.Println("Iniciando migraciones de la base de datos...")
+
+	errUser := s.CreateUsersTable()
+	if errUser != nil {
+		return fmt.Errorf("error creando tabla users: %v", errUser)
+	}
+
+	errEvents := s.CreateEventsTable()
+	if errEvents != nil {
+		return fmt.Errorf("error creando tabla events: %v", errEvents)
+	}
+
+	errAttendees := s.CreateAttendeesTable()
+	if errAttendees != nil {
+		return fmt.Errorf("error creando tabla attendees: %v", errAttendees)
+	}
+
+	log.Println("Todas las migraciones completadas exitosamente")
+	return nil
+}
+
+func (s *service) CreateUsersTable() error {
+	log.Println("entrando en el script de crear tabla users")
+	query := `
+	CREATE TABLE IF NOT EXISTS users (
+		id INT AUTO_INCREMENT PRIMARY KEY,
+		name VARCHAR(100) NOT NULL,
+		email VARCHAR(255) NOT NULL UNIQUE,
+		password VARCHAR(255) NOT NULL
+	) `
+
+	tabla, err := s.db.Exec(query)
+
+	if tabla != nil {
+		fmt.Println("tabla creada")
+	}
+
+	if err != nil {
+		log.Fatalf("error creando tabla users: %v", err)
+		return err
+	}
+
+	log.Println("Tabla 'users' creada exitosamente")
+	return nil
+}
+
+func (s *service) CreateEventsTable() error {
+	query := `
+	CREATE TABLE IF NOT EXISTS events (
+		id INT AUTO_INCREMENT PRIMARY KEY,
+		owner_id INT NOT NULL,  
+		name VARCHAR(100) NOT NULL,
+		description VARCHAR(255) NOT NULL,
+		date DATETIME NOT NULL,
+		location VARCHAR(255) NOT NULL,
+		FOREIGN KEY (owner_id) REFERENCES users(id) ON DELETE CASCADE
+	) `
+
+	tabla, err := s.db.Exec(query)
+
+	if tabla != nil {
+		fmt.Println("tabla creada")
+	}
+
+	if err != nil {
+		log.Fatalf("error creando tabla events: %v", err)
+		return err
+	}
+
+	log.Println("Tabla 'events' creada exitosamente")
+	return nil
+}
+func (s *service) CreateAttendeesTable() error {
+	query := `
+	CREATE TABLE IF NOT EXISTS attendees (
+		id INT AUTO_INCREMENT PRIMARY KEY,
+		event_id INT NOT NULL,
+		user_id INT NOT NULL,
+		FOREIGN KEY (event_id) REFERENCES events(id) ON DELETE CASCADE,
+		FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+	) `
+
+	tabla, err := s.db.Exec(query)
+
+	if tabla != nil {
+		fmt.Println("tabla creada")
+	}
+
+	if err != nil {
+		log.Fatalf("error creando tabla attendees: %v", err)
+		return err
+	}
+
+	log.Println("Tabla 'attendees' creada exitosamente")
+	return nil
 }

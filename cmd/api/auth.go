@@ -1,6 +1,7 @@
 package main
 
 import (
+	"log"
 	"net/http"
 	"time"
 
@@ -25,7 +26,7 @@ type loginResponse struct {
 	Token string `json:"token"`
 }
 
-func (app *application) loginUser(c *gin.Context) {
+func (app *Application) loginUser(c *gin.Context) {
 	var request loginRequest
 
 	if err := c.ShouldBindJSON(&request); err != nil {
@@ -65,7 +66,7 @@ func (app *application) loginUser(c *gin.Context) {
 	c.JSON(http.StatusOK, loginResponse{Token: tokenString})
 }
 
-func (app *application) registerUser(c *gin.Context) {
+func (app *Application) registerUser(c *gin.Context) {
 	var register registerRequest
 
 	if err := c.ShouldBindJSON(&register); err != nil {
@@ -87,7 +88,9 @@ func (app *application) registerUser(c *gin.Context) {
 		Name:     register.Name,
 	}
 
+	log.Println("probablemente no funciona")
 	err = app.models.Users.Insert(&user)
+	log.Println("probablemente funciona")
 
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
